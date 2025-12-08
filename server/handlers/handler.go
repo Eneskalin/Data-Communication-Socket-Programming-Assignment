@@ -26,7 +26,7 @@ func HandleConnection(c1 net.Conn, c2 net.Conn){
 		corruptedData := injectError(data)
 
 		newPacket := fmt.Sprintf("%s|%s|%s", corruptedData, method, ctrl)
-		fmt.Printf("Client 2'ye İletilen (Bozuk): %s\n", newPacket)
+		fmt.Printf("Alıcı Client'a İletilen: %s\n", newPacket)
 
 	}
 

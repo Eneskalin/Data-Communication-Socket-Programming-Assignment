@@ -1,0 +1,16 @@
+{
+    "ports": {
+        "sender_port": "8000",
+        "receiver_port": "9000"
+    },
+    "ErrorInjection": {
+        "BitFlip": true,
+        "characterSubstitution": true,
+        "characterDeletion": true,
+        "characterInsertion":true,
+        "characterSwapping":false,
+        "multipleBitFlips":true,
+        "burstError":true,
+        "noError": false
+    }
+}

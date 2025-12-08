@@ -1,27 +1,40 @@
 package main
 
-import(
-	"net"
+import (
 	"fmt"
+	"net"
 	"server/handlers"
+	"server/helpers"
+	"time"
 )
 
+func main() {
+	config := helpers.LoadConfig()
+	listener, _ := net.Listen("tcp", ":"+config.Ports.SenderPort)
+	fmt.Println("Server", config.Ports.SenderPort, "portundan dinliyor")
 
-func main(){
-	listener, _ := net.Listen("tcp", ":8000")
-	fmt.Println("Server 8000 portundan dinliyor")
+	var client2Conn net.Conn
+	var err error
+
 	
-	client2Conn, err := net.Dial("tcp", "localhost:9000")
-	if err!=nil {
-		fmt.Println("Receiver 9000 portunda bulunamadı");
-		return;
-	}
-	defer client2Conn.Close()
+	go func() {
+		for {
+			fmt.Println("Receiver", config.Ports.ReceiverPort, "portunda bağlanılıyor.")
+			client2Conn, err = net.Dial("tcp", "localhost:"+config.Ports.ReceiverPort)
+			if err != nil {
+				fmt.Println("Receiver,bağlantısı başarısız.")
+				time.Sleep(5 * time.Second)
+			} else {
+				
+				break
+			}
+		}
+	}()
+
 	for {
 		conn, _ := listener.Accept()
-		go handlers.HandleConnection(conn, client2Conn)
+		if client2Conn != nil {
+			go handlers.HandleConnection(conn, client2Conn)
+		}
 	}
-
-
-
 }
