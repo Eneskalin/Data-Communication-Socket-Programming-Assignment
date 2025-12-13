@@ -157,65 +157,65 @@ func computeChecksum(text string) string {
 }
 
 func main() {
+	for {
+		var text string
+		fmt.Println("[SENDER] Enter a text:")
+		fmt.Scanln(&text)
 
-	var text string
-	fmt.Println("Enter a text:")
-	fmt.Scanf("%s", &text)
+		var choice int
+		fmt.Println("[SENDER] Select method: ")
+		fmt.Println("1 - Parity")
+		fmt.Println("2 - 2D Parity")
+		fmt.Println("3 - CRC16")
+		fmt.Println("4 - Hamming Code")
+		fmt.Println("5 - Internet Checksum")
+		fmt.Print("Choice: ")
+		fmt.Scanln(&choice)
 
-	var temp string
-	fmt.Scanln(&temp)
+		methodName := ""
+		control := ""
 
-	var choice int
-	fmt.Println("Select method: ")
-	fmt.Println("1 - Parity")
-	fmt.Println("2 - 2D Parity")
-	fmt.Println("3 - CRC16")
-	fmt.Println("4 - Hamming Code")
-	fmt.Println("5 - Internet Checksum")
-	fmt.Print("Choice: ")
-	fmt.Scanln(&choice)
+		switch choice {
+		case 1:
+			methodName = "PARITY"
+			control = computeParity(text)
 
-	methodName := ""
-	control := ""
+		case 2:
+			methodName = "2DPARITY"
+			control = compute2DParity(text)
 
-	switch choice {
-	case 1:
-		methodName = "PARITY"
-		control = computeParity(text)
+		case 3:
+			methodName = "CRC16"
+			control = computeCRC16(text)
 
-	case 2:
-		methodName = "2DPARITY"
-		control = compute2DParity(text)
+		case 4:
+			methodName = "HAMMING"
+			control = computeHamming(text)
 
-	case 3:
-		methodName = "CRC16"
-		control = computeCRC16(text)
+		case 5:
+			methodName = "CHECKSUM"
+			control = computeChecksum(text)
 
-	case 4:
-		methodName = "HAMMING"
-		control = computeHamming(text)
+		default:
+			fmt.Println("Invalid choice.")
+			continue
+		}
 
-	case 5:
-		methodName = "CHECKSUM"
-		control = computeChecksum(text)
+		packet := fmt.Sprintf("%s|%s|%s\n", text, methodName, control)
 
-	default:
-		fmt.Println("Invalid choice.")
-		return
+		connection, err := net.Dial("tcp", "localhost:8000")
+		if err != nil {
+			fmt.Println("[SENDER] Server'a baglanti basarisiz oldu", err)
+			continue
+		}
+		_, err = connection.Write([]byte(packet))
+		if err != nil {
+			fmt.Println("[SENDER] Sunucuya mesaj gonderilemedi")
+			connection.Close()
+			continue
+		}
+
+		fmt.Println("\n[SENDER] Gönderilen paket:", packet)
+		connection.Close()
 	}
-
-	packet := fmt.Sprintf("%s|%s|%s\n", text, methodName, control)
-
-	connection, err := net.Dial("tcp", "localhost:8000")
-	if err != nil {
-		fmt.Println("Server'a baglanti basarisiz oldu", err)
-	}
-	_, err = connection.Write([]byte(packet))
-	if err != nil {
-		fmt.Println("Sunucuya mesaj gonderilemedi")
-		return
-	}
-
-	fmt.Println("\n Gönderilen paket: ", packet)
-	defer connection.Close()
 }

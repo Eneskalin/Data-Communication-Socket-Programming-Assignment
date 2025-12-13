@@ -61,29 +61,29 @@ func injectError(data string) string {
 
 	switch action {
 	case 0: // No Error
-		fmt.Println("[LOG] Durum: Hata Enjekte Edilmedi")
+		fmt.Println("[SERVER-LOG] Durum: Hata Enjekte Edilmedi")
 
 	case 1: // Case Bit Flip
-		fmt.Println("[LOG] Hata: Bit Flip Enjekte Edildi")
+		fmt.Println("[SERVER-LOG] Hata: Bit Flip Enjekte Edildi")
 		idx := rand.Intn(len(runes))
 		shift := rand.Intn(8) 
 		runes[idx] = runes[idx] ^ (1 << shift)
 
 	case 2: // Case Character Substitution
-		fmt.Println("[LOG] Hata: Karakter Değiştirme Enjekte Edildi")
+		fmt.Println("[SERVER-LOG] Hata: Karakter Değiştirme Enjekte Edildi")
 		idx := rand.Intn(len(runes))
 		
 		runes[idx] = rune(rand.Intn(26) + 65) 
 
 	case 3: // Case Character Deletion 
-		fmt.Println("[LOG] Hata: Karakter Silme Enjekte Edildi")
+		fmt.Println("[SERVER-LOG] Hata: Karakter Silme Enjekte Edildi")
 		if len(runes) > 1 {
 			idx := rand.Intn(len(runes))
 			runes = append(runes[:idx], runes[idx+1:]...)
 		}
 
 	case 4: // Case Random Character Insertion
-		fmt.Println("[LOG] Hata: Karakter Ekleme Enjekte Edildi")
+		fmt.Println("[SERVER-LOG] Hata: Karakter Ekleme Enjekte Edildi")
 		idx := rand.Intn(len(runes) + 1)    
 		newChar := rune(rand.Intn(26) + 65) 
 
@@ -91,14 +91,14 @@ func injectError(data string) string {
 		runes = append(runes[:idx], append([]rune{newChar}, runes[idx:]...)...)
 
 	case 5: // Case Character Swapping
-		fmt.Println("[LOG] Hata: Karakter Kaydırma Enjekte Edildi")
+		fmt.Println("[SERVER-LOG] Hata: Karakter Kaydırma Enjekte Edildi")
 		if len(runes) >= 2 {
 			idx := rand.Intn(len(runes) - 1)
 			runes[idx], runes[idx+1] = runes[idx+1], runes[idx]
 		}
 
 	case 6: // Case Multiple Bit Flips
-		fmt.Println("[LOG] Hata: Çoklu Bit Flip Enjekte Edildi")
+		fmt.Println("[SERVER-LOG] Hata: Çoklu Bit Flip Enjekte Edildi")
 		count := rand.Intn(3) + 2 
 		for i := 0; i < count; i++ {
 			idx := rand.Intn(len(runes))
@@ -107,7 +107,7 @@ func injectError(data string) string {
 		}
 
 	case 7: // Case Burst Error
-		fmt.Println("[LOG] Hata: Burst Error Enjekte Edildi")
+		fmt.Println("[SERVER-LOG] Hata: Burst Error Enjekte Edildi")
 		if len(runes) > 0 {
 			burstLen := rand.Intn(6) + 3 
 			if burstLen > len(runes) {

@@ -35,6 +35,6 @@ func HandleConnection(c1 net.Conn, c2 net.Conn) {
 			return
 		}
 
-		fmt.Printf("Alıcı Client'a İletilen: %s", newPacket)
+		fmt.Printf("[Server] Alıcı Client'a İletilen: %s", newPacket)
 	}
 }
