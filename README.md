@@ -38,7 +38,7 @@ Server, veriyi iletirken config.json dosyasındaki ayarlara göre aşağıdaki b
 - Multiple Bit Flips: Birden fazla bitin ters çevrilmesi.
 
 - Burst Error: Belirli bir bloktaki bitlerin toplu halde bozulması.
-## Ekran Görüntüleri
+## Mimari
 
 ![Uygulama Ekran Görüntüsü](https://i.imgur.com/b2ov0JN.jpeg)
 
