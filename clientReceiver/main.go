@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-
 func main() {
 	listener, err := net.Listen("tcp", ":9000")
 	if err != nil {
@@ -23,7 +22,6 @@ func main() {
 		if err != nil {
 			continue
 		}
-		fmt.Println("[ClientReceiver] Server bağlandı.")
 		go handleConnection(conn)
 	}
 }
@@ -51,45 +49,39 @@ func handleConnection(conn net.Conn) {
 		method := parts[1]
 		control := parts[2]
 
-		fmt.Println("DATA   :", data)
-		fmt.Println("METHOD :", method)
-		fmt.Println("CONTROL:", control)
+		fmt.Println("Received Data :", data)
+		fmt.Println("Method        :", method)
+		fmt.Println("Sent Check    :", control)
 
 		var calculated string
 
 		switch method {
 		case "PARITY":
 			calculated = computeParity(data)
-
 		case "2DPARITY":
 			calculated = compute2DParity(data)
-
 		case "CRC16":
 			calculated = computeCRC16(data)
-
 		case "HAMMING":
 			calculated = computeHamming(data)
-
 		case "CHECKSUM":
 			calculated = computeChecksum(data)
-
 		default:
 			fmt.Println("Bilinmeyen metod")
 			continue
 		}
 
-		fmt.Println("HESAPLANAN:", calculated)
+		fmt.Println("Computed Check:", calculated)
 
 		if calculated == control {
-			fmt.Println("SONUÇ : DATA CORRECT")
+			fmt.Println("Status : DATA CORRECT")
 		} else {
-			fmt.Println("SONUÇ : DATA CORRUPTED")
+			fmt.Println("Status : DATA CORRUPTED")
 		}
 
-		fmt.Println("----------------------------")
+		fmt.Println("----------------------------------")
 	}
 }
-
 
 func computeParity(text string) string {
 	count := 0
@@ -110,6 +102,7 @@ func compute2DParity(text string) string {
 	for len(text)%8 != 0 {
 		text += "\x00"
 	}
+
 	rows := len(text) / 8
 	rowParity := make([]int, rows)
 	colParity := make([]int, 8)
@@ -161,10 +154,48 @@ func computeCRC16(text string) string {
 	return fmt.Sprintf("%04X", crc&0xFFFF)
 }
 
+func countBits(h []byte, pos []int) byte {
+	count := 0
+	for _, p := range pos {
+		if h[p] == '1' {
+			count++
+		}
+	}
+	if count%2 == 0 {
+		return '0'
+	}
+	return '1'
+}
+
+func computeHammingForByte(b byte) string {
+	data := fmt.Sprintf("%08b", b)
+	h := make([]byte, 13)
+
+	h[3] = data[0]
+	h[5] = data[1]
+	h[6] = data[2]
+	h[7] = data[3]
+	h[9] = data[4]
+	h[10] = data[5]
+	h[11] = data[6]
+	h[12] = data[7]
+
+	h[1] = countBits(h, []int{3, 5, 7, 9, 11})
+	h[2] = countBits(h, []int{3, 6, 7, 10, 11})
+	h[4] = countBits(h, []int{5, 6, 7, 12})
+	h[8] = countBits(h, []int{9, 10, 11, 12})
+
+	out := ""
+	for i := 1; i <= 12; i++ {
+		out += string(h[i])
+	}
+	return out
+}
+
 func computeHamming(text string) string {
 	result := ""
 	for _, ch := range []byte(text) {
-		result += fmt.Sprintf("%08b ", ch)
+		result += computeHammingForByte(ch) + " "
 	}
 	return strings.TrimSpace(result)
 }
